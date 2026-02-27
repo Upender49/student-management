@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student CRUD - MongoDB</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Student Management System</h1>
+
+    <!-- CREATE / UPDATE FORM -->
+    <div class="form-section">
+        <h2>Add / Update Student</h2>
+
+        <form id="studentForm">
+
+            <input type="hidden" id="studentId">
+
+            <div class="form-group" >
+                <label>Name</label>
+                <input type="text" id="name" required>
+            </div>
+
+            <div class="form-group" >
+                <label>Age</label>
+                <input  type="number" id="age" required>
+            </div>
+
+            <div class="form-group" >
+                <label>Course</label>
+                <input  type="text" id="course" required>
+            </div>
+
+            <div class="form-group">
+                <label>Admission Date</label>
+                <input  type="date" id="admissionDate" required>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn create-btn" onclick=insertData()>Save Student</button>
+                <button type="reset" class="btn reset-btn">Clear</button>
+                 <button type="button" class="btn reset-btn" onclick="displayData()">show</button>
+            </div>
+
+        </form>
+    </div>
+
+
+    <!-- READ SECTION -->
+    <div class="table-section">
+
+        <h2>Students List</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Course</th>
+                    <th>Admission Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+             <tbody id="studentTable"></tbody>
+           </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+    async function insertData() {
+    const name = document.getElementById('name').value;
+    const age = document.getElementById('age').value;
+    const course = document.getElementById('course').value;
+    const admissionDate = document.getElementById('admissionDate').value;
+    let postres = await fetch('http://127.0.0.1:2000/api/users',{
+        method : 'post',
+        body : JSON.stringify({
+        name : name,
+        age : age,
+        section : course,
+        admissionDate : admissionDate
+        }),
+        headers : {'Content-type' : 'application/json'}
+    })
+    let newdata = await postres.json()
+    console.log(newdata)
+    window.alert(newdata.name);
+    }
+    async function displayData(){
+
+        let fetcheddata = await fetch('http://127.0.0.1:2000/api/users');
+        let data = await fetcheddata.json();
+        console.log(typeof data);
+        let dom = "";
+        data.forEach((element) => {
+         dom +=`
+            
+                <!-- Data will come here -->
+                <tr>    
+                    <td>${element.name}</td>
+                    <td>${element.age}</td>
+                    <td>${element.section}</td>
+                    <td>${element.admissionDate}</td>
+                    <td>
+                        <button class="btn edit-btn">Edit</button>
+                        <button class="btn delete-btn">Delete</button>
+                    </td>
+                </tr>
+            
+        `
+    });
+    document.getElementById('studentTable').innerHTML = dom;
+}
+
+</script>
+</body>
+</html>
