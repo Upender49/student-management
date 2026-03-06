@@ -75,6 +75,51 @@
 </div>
 
 <script>
+    async function  editStudent(id) {
+        try{
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const course = document.getElementById('course').value;
+            const admissionDate = document.getElementById('admissionDate').value;
+            let response = await fetch(`http://127.0.0.1:2000/api/users/${id}`,{
+                method : 'PUT',
+                body : JSON.stringify({
+                name : name,
+                age : age,
+                section : course,
+                admissionDate : admissionDate
+                }),
+                headers : {'Content-type' : 'application/json'}
+            });
+            if (response.ok) {
+                alert("Student updated successfully!");
+                displayData(); 
+            } else {
+                alert("Failed to update student.");
+            }
+        }
+        catch(e){
+            console.log(e)
+        }
+    }
+    async function deleteStudent(id) {
+
+        try {
+            let response = await fetch(`http://127.0.0.1:2000/api/users/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert("Student deleted successfully!");
+                displayData(); 
+            } else {
+                alert("Failed to delete student.");
+            }
+        } catch (error) {
+            console.error("Error deleting student:", error);
+        }
+    
+}
     async function insertData() {
     const name = document.getElementById('name').value;
     const age = document.getElementById('age').value;
@@ -98,7 +143,7 @@
 
         let fetcheddata = await fetch('http://127.0.0.1:2000/api/users');
         let data = await fetcheddata.json();
-        console.log(typeof data);
+        console.log(data);
         let dom = "";
         data.forEach((element) => {
          dom +=`
@@ -110,8 +155,8 @@
                     <td>${element.section}</td>
                     <td>${element.admissionDate}</td>
                     <td>
-                        <button class="btn edit-btn">Edit</button>
-                        <button class="btn delete-btn">Delete</button>
+                    <button class="btn edit-btn" onclick="editStudent('${element._id}')">Edit</button>
+                    <button class="btn delete-btn" onclick="deleteStudent('${element._id}')">Delete</button>
                     </td>
                 </tr>
             
